@@ -87,4 +87,17 @@ class DumpJenkinsJobsTaskTest {
 			project.tasks.dumpJenkinsJobs.execute()
 		}
 	}
+	
+	@Test
+	def void execute_dumpsRawJobsToFile() {
+		project.tasks.dumpJenkinsJobs.prettyPrint = false
+		project.tasks.dumpJenkinsJobs.execute()
+		
+		def dumpDir = new File('build/tmp/test/build/jobs')
+		project.jenkins.jobs.each { job ->
+			def jobFile = new File(dumpDir, "${job.name}-config.xml")
+			assert jobFile.exists()
+			assert jobFile.getText() == job.definition.xml
+		}
+	}
 }
